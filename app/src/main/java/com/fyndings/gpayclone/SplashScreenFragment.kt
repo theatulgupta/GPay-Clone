@@ -1,6 +1,7 @@
 package com.fyndings.gpayclone
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,7 +17,6 @@ class SplashScreenFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-
         Handler(Looper.getMainLooper()).postDelayed({
             findNavController().navigate(R.id.action_splashScreenFragment2_to_loginFragment)
         }, 2000)

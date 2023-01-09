@@ -1,5 +1,6 @@
 package com.fyndings.gpayclone
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ class DashboardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        requireActivity().window.statusBarColor = this.resources.getColor(R.color.theme_blue)
         _binding = FragmentDashboardBinding.inflate(inflater, container, false);
         return binding.root
     }
