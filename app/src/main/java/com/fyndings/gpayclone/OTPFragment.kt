@@ -25,8 +25,8 @@ import com.google.firebase.auth.PhoneAuthProvider
 
 class OTPFragment : Fragment() {
     private var _binding: FragmentOTPBinding? = null
-    val inputMethodManager =
-        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//    val inputMethodManager =
+//        context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     private lateinit var auth: FirebaseAuth
 
     private val binding get() = _binding!!
@@ -140,7 +140,7 @@ class OTPFragment : Fragment() {
                     }
                     binding.btnVerify.background.setTint(resources.getColor(R.color.theme_blue))
                     binding.btnVerify.setTextColor(resources.getColor(R.color.white))
-                    view.hideKeyboard(inputMethodManager)
+//                    view.hideKeyboard(inputMethodManager)
                 }
             }
         }

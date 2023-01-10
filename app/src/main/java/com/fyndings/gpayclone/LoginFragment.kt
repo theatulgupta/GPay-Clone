@@ -127,9 +127,8 @@ class LoginFragment : Fragment() {
                 val bundle = Bundle()
                 bundle.putString("OTP", verificationId)
                 bundle.putString("phoneNumber", binding.etPhoneNumber.text.toString())
-                bundle.putString("resendToken", token.toString())
-                findNavController().navigate(R.id.action_loginFragment_to_OTPFragment,
-                    bundle)
+                findNavController().navigate(R.id.action_loginFragment_to_OTPFragment, bundle)
+                binding.progressBar.visibility = View.GONE
             }
         }
 
