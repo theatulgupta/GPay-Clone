@@ -40,11 +40,13 @@
                 android:drawablePadding="8dp"
                 android:elevation="10dp"
                 android:hint="Pay friends and merchants"
+                android:maxLength="30"
+                android:maxLines="1"
                 android:padding="13dp"
                 android:textColorHint="@color/theme_gray"
                 android:textSize="15sp" />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
@@ -217,8 +219,7 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_people"
-            tools:listitem="@layout/item_grid" />
+            app:layout_constraintTop_toBottomOf="@id/txt_people" />
 
         <!--        Businesses-->
         <TextView
@@ -242,8 +243,87 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_business"
-            tools:listitem="@layout/item_grid" />
+            app:layout_constraintTop_toBottomOf="@id/txt_business" />
+
+        <!--        Bills, recharges and more-->
+        <TextView
+            android:id="@+id/txt_bills"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:text="Bills, recharges and more"
+            android:textSize="17sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/businesses_recyclerView" />
+
+        <TextView
+            android:id="@+id/txt_no_due"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="8dp"
+            android:text="No bills due. Try adding these!"
+            android:textColor="@color/theme_gray"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_bills" />
+
+        <GridView
+            android:id="@+id/billGridView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="17dp"
+            android:gravity="center"
+            android:numColumns="4"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_no_due" />
+
+        <TextView
+            android:id="@+id/btn_see_all"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="25dp"
+            android:background="@drawable/custom_box"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="5dp"
+            android:text="See all"
+            android:textColor="@color/theme_blue"
+            android:textSize="15sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/billGridView" />
+
+        <!--        Promotions-->
+        <TextView
+            android:id="@+id/txt_promotions"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:text="Promotions"
+            android:textSize="17sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_see_all" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/promotionRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="15dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_promotions" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

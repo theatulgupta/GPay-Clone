@@ -20,4 +20,5 @@
     <color name="theme_light_gray4">#F5F5F5</color>
     <color name="continue_btn_bg">#e7e9e8</color>
     <color name="continue_btn_text">#a8aaa9</color>
+    <color name="theme_light_blue">#A2E2FF</color>
 </resources>

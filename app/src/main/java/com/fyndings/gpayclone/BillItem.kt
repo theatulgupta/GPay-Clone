@@ -1,6 +1,6 @@
 package com.fyndings.gpayclone
 
-data class GridItem(
-    val image: Int,
+data class BillItem(
+    val logo: Int,
     val text: String,
 )
