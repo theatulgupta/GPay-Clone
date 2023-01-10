@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_OTPFragment_to_dashboardFragment"
             app:destination="@id/dashboardFragment" />
+        <action
+            android:id="@+id/action_OTPFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/dashboardFragment"
@@ -36,5 +39,8 @@
         <action
             android:id="@+id/action_splashScreenFragment2_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_splashScreenFragment2_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
     </fragment>
 </navigation>

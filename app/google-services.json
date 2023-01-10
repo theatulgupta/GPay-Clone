@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1040223541481",
+    "project_id": "gpay-clone",
+    "storage_bucket": "gpay-clone.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040223541481:android:a4f452819be79c7f4c7878",
+        "android_client_info": {
+          "package_name": "com.fyndings.gpayclone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1040223541481-louj0psoki0cv4khjspaqmm3nu0q5i01.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fyndings.gpayclone",
+            "certificate_hash": "07297a4f3eb12e7778e141b2ffa8e4cf6096dad4"
+          }
+        },
+        {
+          "client_id": "1040223541481-7mpm26ssii8c2975rquq1ramnf765rjn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv-fQ2KqbmcIaxk7GnUAJVLQj5i9R9G6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1040223541481-7mpm26ssii8c2975rquq1ramnf765rjn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

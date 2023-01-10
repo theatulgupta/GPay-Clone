@@ -10,18 +10,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 
 class SplashScreenFragment : Fragment() {
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+
+        auth = FirebaseAuth.getInstance()
+
         Handler(Looper.getMainLooper()).postDelayed({
             findNavController().navigate(R.id.action_splashScreenFragment2_to_loginFragment)
         }, 2000)
 
         return inflater.inflate(R.layout.fragment_splash_screen, container, false)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser != null) {
+            findNavController().navigate(R.id.action_splashScreenFragment2_to_dashboardFragment)
+        }
     }
 
 }
