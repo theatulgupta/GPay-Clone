@@ -22,10 +22,6 @@ class SplashScreenFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(R.id.action_splashScreenFragment2_to_loginFragment)
-        }, 2000)
-
         return inflater.inflate(R.layout.fragment_splash_screen, container, false)
     }
 
@@ -33,6 +29,10 @@ class SplashScreenFragment : Fragment() {
         super.onStart()
         if (auth.currentUser != null) {
             findNavController().navigate(R.id.action_splashScreenFragment2_to_dashboardFragment)
+        } else {
+            Handler(Looper.getMainLooper()).postDelayed({
+                findNavController().navigate(R.id.action_splashScreenFragment2_to_loginFragment)
+            }, 2000)
         }
     }
 

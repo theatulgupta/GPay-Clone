@@ -1,6 +1,8 @@
 package com.fyndings.gpayclone
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,7 +11,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.fyndings.gpayclone.databinding.FragmentLoginBinding
@@ -33,24 +37,32 @@ class LoginFragment : Fragment() {
 //        Initializing auth
         auth = FirebaseAuth.getInstance()
 
-        var phoneNumber = binding.etPhoneNumber.text.trim().toString()
+        val inputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        var phoneNumber = binding.etPhoneNumber.text.toString()
         binding.etPhoneNumber.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                binding.btnContinue.background.setTint(resources.getColor(R.color.theme_blue))
-                binding.btnContinue.setTextColor(resources.getColor(R.color.white))
+                if (s.length == 10) {
+                    binding.btnContinue.background.setTint(resources.getColor(R.color.theme_blue))
+                    binding.btnContinue.setTextColor(resources.getColor(R.color.white))
+                    view?.hideKeyboard(inputMethodManager)
+                }
             }
         })
 
         binding.btnContinue.setOnClickListener {
-            if (phoneNumber.isNotEmpty()) {
-                if (phoneNumber.length == 10) {
-                    phoneNumber = "+91$phoneNumber"
+            binding.progressBar.visibility = View.VISIBLE
+            var phone = binding.etPhoneNumber.text.toString()
+            if (phone.isNotEmpty()) {
+                if (phone.length == 10) {
+                    phone = "+91$phone"
 
                     val options = PhoneAuthOptions.newBuilder(auth)
-                        .setPhoneNumber(phoneNumber)       // Phone number to verify
-                        .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                        .setPhoneNumber(phone)       // Phone number to verify
+                        .setTimeout(30L, TimeUnit.SECONDS) // Timeout and unit
                         .setActivity(this.requireActivity())                 // Activity (for callback binding)
                         .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
                         .build()
@@ -120,4 +132,8 @@ class LoginFragment : Fragment() {
                     bundle)
             }
         }
+
+    fun View.hideKeyboard(inputMethodManager: InputMethodManager) {
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
 }
