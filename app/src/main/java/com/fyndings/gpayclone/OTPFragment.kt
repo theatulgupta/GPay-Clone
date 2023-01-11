@@ -31,8 +31,8 @@ class OTPFragment : Fragment() {
     private lateinit var sharedPreference: SharedPreferences
 
 
-    val inputMethodManager =
-        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//    val inputMethodManager =
+//        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
     private lateinit var auth: FirebaseAuth
 
@@ -191,7 +191,7 @@ class OTPFragment : Fragment() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length == 1) {
                     enableButton()
-                    view?.hideKeyboard(inputMethodManager)
+//                    view?.hideKeyboard(inputMethodManager)
                 } else {
                     binding.otp5.requestFocus()
                     disableButton()
