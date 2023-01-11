@@ -1,22 +1,28 @@
 package com.fyndings.gpayclone
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.opengl.Visibility
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.widget.addTextChangedListener
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.fyndings.gpayclone.databinding.FragmentLoginBinding
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -25,113 +31,111 @@ import java.util.concurrent.TimeUnit
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+    private lateinit var sharedPreference: SharedPreferences
+
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false);
+        binding.btnContinue.isEnabled = false
+
+//        Init Shared Preference
+        sharedPreference =
+            requireActivity().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE)
 
 //        Initializing auth
         auth = FirebaseAuth.getInstance()
 
+
         val inputMethodManager =
             context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        var phoneNumber = binding.etPhoneNumber.text.toString()
+
+//        Text Watcher for phone number
         binding.etPhoneNumber.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length == 10) {
                     binding.btnContinue.background.setTint(resources.getColor(R.color.theme_blue))
+                    binding.btnContinue.isEnabled = true
                     binding.btnContinue.setTextColor(resources.getColor(R.color.white))
                     view?.hideKeyboard(inputMethodManager)
                 }
             }
         })
 
+//        Initializing Google SignIn Options
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+
         binding.btnContinue.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
-            var phone = binding.etPhoneNumber.text.toString()
-            if (phone.isNotEmpty()) {
-                if (phone.length == 10) {
-                    phone = "+91$phone"
-
-                    val options = PhoneAuthOptions.newBuilder(auth)
-                        .setPhoneNumber(phone)       // Phone number to verify
-                        .setTimeout(30L, TimeUnit.SECONDS) // Timeout and unit
-                        .setActivity(this.requireActivity())                 // Activity (for callback binding)
-                        .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
-                        .build()
-                    PhoneAuthProvider.verifyPhoneNumber(options)
-
-                } else {
-                    Toast.makeText(this.activity,
-                        "Please enter valid phone number",
-                        Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this.activity, "Please enter phone number", Toast.LENGTH_SHORT)
-                    .show()
-            }
+            binding.txtProgressBar.text = "Fetching Google accounts"
+            binding.imgProcess.setImageResource(R.drawable.ic_connecting)
+            val phoneNumber = binding.etPhoneNumber.text.toString()
+            signInGoogle()
         }
+
         return binding.root
     }
 
-    //    signInWithPhoneAuthCredential
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this.requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    findNavController().navigate(R.id.action_splashScreenFragment2_to_dashboardFragment)
-                    Toast.makeText(this.activity,
-                        "Authentication Successful",
-                        Toast.LENGTH_SHORT).show()
-                } else {
-                    // Sign in failed, display a message and update the UI
-                    Log.d(TAG,
-                        "signInWithPhoneAuthCredential: {${task.exception.toString()}")
-                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                    }
-                    // Update UI
-                }
-            }
+    //       Google Authentication
+    private fun signInGoogle() {
+        val signInIntent = googleSignInClient.signInIntent
+        launcher.launch(signInIntent)
     }
 
-    //    Handling callbacks
-    private val callbacks =
-        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                signInWithPhoneAuthCredential(credential)
-            }
-
-            override fun onVerificationFailed(e: FirebaseException) {
-                if (e is FirebaseAuthInvalidCredentialsException) {
-                    // Invalid request
-                    Log.d("TAG", "onVerificationFailed: ${e.toString()}")
-                } else if (e is FirebaseTooManyRequestsException) {
-                    // The SMS quota for the project has been exceeded
-                    Log.d("TAG", "onVerificationFailed: ${e.toString()}")
-                }
-            }
-
-            override fun onCodeSent(
-                verificationId: String,
-                token: PhoneAuthProvider.ForceResendingToken,
-            ) {
-                val bundle = Bundle()
-                bundle.putString("OTP", verificationId)
-                bundle.putString("phoneNumber", binding.etPhoneNumber.text.toString())
-                findNavController().navigate(R.id.action_loginFragment_to_OTPFragment, bundle)
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
                 binding.progressBar.visibility = View.GONE
-            }
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                handleResults(task)
+            } else binding.progressBar.visibility = View.VISIBLE
+
         }
 
+    private fun handleResults(task: Task<GoogleSignInAccount>) {
+        if (task.isSuccessful) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.txtProgressBar.text = "Signing in"
+            val account: GoogleSignInAccount = task.result
+            updateUI(account)
+        } else {
+            binding.progressBar.visibility = View.GONE
+            Toast.makeText(this.activity, task.exception.toString(), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateUI(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        auth.signInWithCredential(credential).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val phone = binding.etPhoneNumber.text.toString()
+                sharedPreference.edit()
+                    .putString("phone", phone)
+                    .apply()
+                binding.progressBar.visibility = View.GONE
+                findNavController().navigate(R.id.action_loginFragment_to_termsAndConditionsFragment)
+            } else {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(this.activity, it.exception.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    //    Hide-keyboard feature after successful input
     fun View.hideKeyboard(inputMethodManager: InputMethodManager) {
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }

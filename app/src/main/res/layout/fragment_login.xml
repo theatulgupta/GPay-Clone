@@ -7,17 +7,6 @@
     android:fitsSystemWindows="true"
     tools:context=".LoginFragment">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="-150dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/gpay_logo"
         android:layout_width="80dp"
@@ -92,6 +81,7 @@
         android:layout_marginVertical="20dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/custom_btn"
+        android:clickable="false"
         android:gravity="center"
         android:imeOptions="actionNext"
         android:text="Continue"
@@ -101,4 +91,62 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <!--    Progress Bar-->
+    <RelativeLayout
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="215dp"
+            android:src="@drawable/ic_otp_progress" />
+
+        <ProgressBar
+            android:id="@+id/progressCircle"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="200dp"
+            android:progressBackgroundTint="@color/theme_blue"
+            android:progressDrawable="@color/theme_blue"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_progress_bar"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progressCircle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:text="Verifying +91 7723807525"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/img_process"
+            android:layout_width="275dp"
+            android:layout_height="215dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_sending_otp" />
+
+    </RelativeLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,8 +11,8 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_loginFragment_to_OTPFragment"
-            app:destination="@id/OTPFragment" />
+            android:id="@+id/action_loginFragment_to_termsAndConditionsFragment"
+            app:destination="@id/termsAndConditionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/OTPFragment"
@@ -23,8 +23,8 @@
             android:id="@+id/action_OTPFragment_to_dashboardFragment"
             app:destination="@id/dashboardFragment" />
         <action
-            android:id="@+id/action_OTPFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/action_OTPFragment_to_termsAndConditionsFragment"
+            app:destination="@id/termsAndConditionsFragment" />
     </fragment>
     <fragment
         android:id="@+id/dashboardFragment"
@@ -42,5 +42,20 @@
         <action
             android:id="@+id/action_splashScreenFragment2_to_dashboardFragment"
             app:destination="@id/dashboardFragment" />
+        <action
+            android:id="@+id/action_splashScreenFragment2_to_dashboardFragment2"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/termsAndConditionsFragment"
+        android:name="com.fyndings.gpayclone.TermsAndConditionsFragment"
+        android:label="fragment_terms_and_conditions"
+        tools:layout="@layout/fragment_terms_and_conditions" >
+        <action
+            android:id="@+id/action_termsAndConditionsFragment_to_OTPFragment"
+            app:destination="@id/OTPFragment" />
+        <action
+            android:id="@+id/action_termsAndConditionsFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

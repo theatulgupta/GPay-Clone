@@ -25,7 +25,8 @@ import com.google.firebase.auth.PhoneAuthProvider
 
 class OTPFragment : Fragment() {
     private var _binding: FragmentOTPBinding? = null
-//    val inputMethodManager =
+
+    //    val inputMethodManager =
 //        context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     private lateinit var auth: FirebaseAuth
 
@@ -36,12 +37,16 @@ class OTPFragment : Fragment() {
     ): View {
         _binding = FragmentOTPBinding.inflate(inflater, container, false);
 
-        binding.progressBar.visibility = View.VISIBLE
         auth = FirebaseAuth.getInstance()
+
+        //        Handling back button
+        binding.btnBack.setOnClickListener {
+            findNavController().navigate(R.id.action_OTPFragment_to_termsAndConditionsFragment)
+        }
 
 
         val otp = arguments?.getString("OTP").toString()
-        val resendToken = arguments?.getString("resendToken")
+//        val resendToken = arguments?.getString("resendToken")
         val phoneNumber = arguments?.getString("phoneNumber")
         binding.txtOtp.text = "Enter the OTP sent to +91 $phoneNumber"
         binding.progressBar.visibility = View.GONE
@@ -53,15 +58,13 @@ class OTPFragment : Fragment() {
             // Callback function, fired on regular interval
             override fun onTick(millisUntilFinished: Long) {
                 binding.txtTimer.text =
-                    "Having trouble? Request a new OTP in 00:" + (millisUntilFinished / 1000).toString()
+                    (if (millisUntilFinished / 1000 >= 10) "Having trouble? Request a new OTP in 00:" + millisUntilFinished / 1000
+                    else "Having trouble? Request a new OTP in 00:0" + millisUntilFinished / 1000).toString()
             }
 
             // Callback function, fired when the time is up
             override fun onFinish() {
-                binding.txtTimer.text = "Resend OTP"
-                binding.txtTimer.setTextColor(resources.getColor(R.color.theme_blue))
-                binding.txtTimer.setTextAppearance(requireContext(),
-                    androidx.appcompat.R.style.TextAppearance_AppCompat_Title);
+                binding.btnResend.visibility = View.VISIBLE
             }
         }.start()
 
