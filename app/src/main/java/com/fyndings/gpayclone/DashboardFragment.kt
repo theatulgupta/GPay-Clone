@@ -33,8 +33,7 @@ class DashboardFragment : Fragment() {
         val account = auth.currentUser
         val profilePictureUrl = account?.photoUrl
 
-        Picasso.get().load(profilePictureUrl).into(binding.imgProfilePicture);
-
+//        Picasso.get().load(profilePictureUrl).into(binding.imgProfilePicture);
 
 
 //        People RecyclerView
