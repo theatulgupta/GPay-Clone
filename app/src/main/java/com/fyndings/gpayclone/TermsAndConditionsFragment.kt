@@ -143,6 +143,7 @@ class TermsAndConditionsFragment : Fragment() {
                 val bundle = Bundle()
                 bundle.putString("OTP", verificationId)
                 bundle.putString("phoneNumber", phone)
+                bundle.putString("resendToken", token.toString())
                 binding.progressBar.visibility = View.GONE
                 findNavController().navigate(R.id.action_termsAndConditionsFragment_to_OTPFragment,
                     bundle)

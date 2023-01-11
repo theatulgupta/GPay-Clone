@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fyndings.gpayclone.databinding.FragmentDashboardBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
 
 class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
+
+    private lateinit var auth: FirebaseAuth
+
     private lateinit var peopleList: ArrayList<GridItem>
     private lateinit var businessList: ArrayList<GridItem>
     private lateinit var promotionList: ArrayList<GridItem>
@@ -22,6 +27,15 @@ class DashboardFragment : Fragment() {
     ): View {
         requireActivity().window.statusBarColor = this.resources.getColor(R.color.theme_blue)
         _binding = FragmentDashboardBinding.inflate(inflater, container, false);
+
+        auth = FirebaseAuth.getInstance()
+
+        val account = auth.currentUser
+        val profilePictureUrl = account?.photoUrl
+
+        Picasso.get().load(profilePictureUrl).into(binding.imgProfilePicture);
+
+
 
 //        People RecyclerView
         binding.peopleRecyclerView.setHasFixedSize(true)

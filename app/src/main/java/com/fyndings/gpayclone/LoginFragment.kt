@@ -121,7 +121,7 @@ class LoginFragment : Fragment() {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         auth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-                val phone = binding.etPhoneNumber.text.toString()
+                val phone = binding.etPhoneNumber.text.trim().toString()
                 sharedPreference.edit()
                     .putString("phone", phone)
                     .apply()

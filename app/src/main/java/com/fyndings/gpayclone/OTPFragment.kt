@@ -2,6 +2,7 @@ package com.fyndings.gpayclone
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -13,21 +14,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.fyndings.gpayclone.databinding.FragmentLoginBinding
 import com.fyndings.gpayclone.databinding.FragmentOTPBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.*
+import java.util.concurrent.TimeUnit
 
 class OTPFragment : Fragment() {
     private var _binding: FragmentOTPBinding? = null
+    private lateinit var sharedPreference: SharedPreferences
 
-    //    val inputMethodManager =
-//        context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+    val inputMethodManager =
+        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
     private lateinit var auth: FirebaseAuth
 
     private val binding get() = _binding!!
@@ -39,6 +45,10 @@ class OTPFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
 
+        //        Init Shared Preference
+        sharedPreference =
+            requireActivity().getSharedPreferences("USER_DATA", Context.MODE_PRIVATE)
+
         //        Handling back button
         binding.btnBack.setOnClickListener {
             findNavController().navigate(R.id.action_OTPFragment_to_termsAndConditionsFragment)
@@ -46,7 +56,7 @@ class OTPFragment : Fragment() {
 
 
         val otp = arguments?.getString("OTP").toString()
-//        val resendToken = arguments?.getString("resendToken")
+        val resendToken = arguments?.getString("resendToken")
         val phoneNumber = arguments?.getString("phoneNumber")
         binding.txtOtp.text = "Enter the OTP sent to +91 $phoneNumber"
         binding.progressBar.visibility = View.GONE
@@ -68,9 +78,12 @@ class OTPFragment : Fragment() {
             }
         }.start()
 
+
         editTextChangedListener()
 
+
         binding.btnVerify.setOnClickListener {
+            binding.progressBar.visibility = View.VISIBLE
 //            collect otp from all the edit text
             val typedOTP = binding.otp1.text.toString() +
                     binding.otp2.text.toString() +
@@ -98,6 +111,7 @@ class OTPFragment : Fragment() {
             .addOnCompleteListener(this.requireActivity()) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
+                    binding.progressBar.visibility = View.GONE
                     findNavController().navigate(R.id.action_OTPFragment_to_dashboardFragment)
                     Toast.makeText(this.activity,
                         "Authentication Successful",
@@ -114,43 +128,93 @@ class OTPFragment : Fragment() {
             }
     }
 
-    //        Text Change Listener
-    private fun editTextChangedListener() {
-        binding.otp1.addTextChangedListener { EditTextWatcher(binding.otp1) }
-        binding.otp2.addTextChangedListener { EditTextWatcher(binding.otp2) }
-        binding.otp3.addTextChangedListener { EditTextWatcher(binding.otp3) }
-        binding.otp4.addTextChangedListener { EditTextWatcher(binding.otp4) }
-        binding.otp5.addTextChangedListener { EditTextWatcher(binding.otp5) }
-        binding.otp6.addTextChangedListener { EditTextWatcher(binding.otp6) }
-    }
-
-    //        Text-Watcher Feature
-    inner class EditTextWatcher(private val view: View) : TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-        override fun afterTextChanged(p0: Editable?) {
-            val text = p0.toString()
-            when (view.id) {
-                R.id.otp1 -> if (text.length == 1) binding.otp2.requestFocus()
-                R.id.otp2 -> if (text.length == 1) binding.otp3.requestFocus() else if (text.isEmpty()) binding.otp1.requestFocus()
-                R.id.otp3 -> if (text.length == 1) binding.otp4.requestFocus() else if (text.isEmpty()) binding.otp2.requestFocus()
-                R.id.otp4 -> if (text.length == 1) binding.otp5.requestFocus() else if (text.isEmpty()) binding.otp3.requestFocus()
-                R.id.otp5 -> if (text.length == 1) binding.otp6.requestFocus() else if (text.isEmpty()) binding.otp4.requestFocus()
-                R.id.otp6 -> if (text.length == 1) {
-                    if (text.isEmpty()) {
-                        binding.otp5.requestFocus()
-                    }
-                    binding.btnVerify.background.setTint(resources.getColor(R.color.theme_blue))
-                    binding.btnVerify.setTextColor(resources.getColor(R.color.white))
-//                    view.hideKeyboard(inputMethodManager)
-                }
-            }
-        }
-
-    }
 
     fun View.hideKeyboard(inputMethodManager: InputMethodManager) {
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    //        Text Change Listener
+    private fun editTextChangedListener() {
+
+        binding.otp1.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length == 1) binding.otp2.requestFocus() else disableButton()
+            }
+        })
+        binding.otp2.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length == 1) binding.otp3.requestFocus() else {
+                    disableButton()
+                    binding.otp1.requestFocus()
+                }
+            }
+        })
+        binding.otp3.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length == 1) binding.otp4.requestFocus() else {
+                    disableButton()
+                    binding.otp2.requestFocus()
+                }
+
+            }
+        })
+        binding.otp4.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length == 1) binding.otp5.requestFocus() else {
+                    disableButton()
+                    binding.otp3.requestFocus()
+                }
+
+            }
+        })
+        binding.otp5.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length == 1) binding.otp6.requestFocus() else {
+                    binding.otp4.requestFocus()
+                    disableButton()
+                }
+            }
+        })
+        binding.otp6.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (s.length == 1) {
+                    enableButton()
+                    view?.hideKeyboard(inputMethodManager)
+                } else {
+                    binding.otp5.requestFocus()
+                    disableButton()
+                }
+            }
+        })
+    }
+
+    fun disableButton() {
+        binding.btnVerify.background.setTint(ContextCompat.getColor(requireContext(),
+            R.color.continue_btn_bg))
+        binding.btnVerify.isEnabled = false
+        binding.btnResend.isEnabled = true
+        binding.btnVerify.setTextColor(ContextCompat.getColor(requireContext(),
+            R.color.continue_btn_text))
+    }
+
+    fun enableButton() {
+        binding.btnVerify.background.setTint(ContextCompat.getColor(requireContext(),
+            R.color.theme_blue))
+        binding.btnVerify.isEnabled = true
+        binding.btnResend.isEnabled = true
+        binding.btnVerify.setTextColor(ContextCompat.getColor(requireContext(),
+            R.color.white))
     }
 }
